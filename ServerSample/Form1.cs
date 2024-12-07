@@ -4,6 +4,8 @@ namespace ServerSample
 {
     public partial class Form1 : Form
     {
+        private AppData _appData = new AppData();
+
         public Form1()
         {
             InitializeComponent();
@@ -26,14 +28,13 @@ namespace ServerSample
 
         private void btnSettingDevice_Click(object sender, EventArgs e)
         {
-            using (FormSettingDevice f = new FormSettingDevice())
+            using (FormSettingDevice f = new FormSettingDevice(_appData))
             {
                 f.StartPosition = FormStartPosition.CenterParent;
                 if(f.ShowDialog() == DialogResult.OK)
-                {
-                    var list = FileUtils.ReadFromJsonFile<List<Device>>("data.obj");
+                {                    
                     cmbDevice.DisplayMember = "Name";
-                    cmbDevice.DataSource = list;
+                    cmbDevice.DataSource = new BindingList<Device>(_appData.Devices);
                 }
             }
         }
@@ -44,7 +45,7 @@ namespace ServerSample
             var dev = cmb.SelectedItem as Device;
             if (dev != null)
             {
-                _bindingCommands = new BindingList<ResponseCommand>(dev.Commands);
+                gridResponse.DataSource = new BindingList<ResponseCommand>(dev.Commands);
             }
         }
     }

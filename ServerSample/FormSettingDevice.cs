@@ -13,12 +13,13 @@ namespace ServerSample
 {
     public partial class FormSettingDevice : Form
     {
-        private BindingList<ResponseCommand> _bindingCommands = new BindingList<ResponseCommand>();
-        private BindingList<Device> _devices;
+        private AppData _appData;
 
-        public FormSettingDevice()
+        public FormSettingDevice(AppData appdata)
         {
             InitializeComponent();
+            _appData = appdata;
+            gridResponse.AutoGenerateColumns = false;
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
@@ -28,8 +29,7 @@ namespace ServerSample
                 f.StartPosition = FormStartPosition.CenterParent;
                 if (f.ShowDialog() == DialogResult.OK)
                 {
-                    _devices.Add(new Device() { Name = f.DeviceName });
-                    FileUtils.WriteToJsonFile("data.json", _devices, true);
+                    _appData.Devices.Add(new Device() { Name = f.DeviceName });
                 }
             }
         }
@@ -40,23 +40,19 @@ namespace ServerSample
             var dev = cmb.SelectedItem as Device;
             if (dev != null)
             {
-                _bindingCommands = new BindingList<ResponseCommand>(dev.Commands);
+                gridResponse.DataSource = new BindingList<ResponseCommand>(dev.Commands);
             }
         }
 
         private void FormSettingDevice_Shown(object sender, EventArgs e)
         {
-            var list = FileUtils.ReadFromJsonFile<List<Device>>("data.json");
-            _devices = new BindingList<Device>(list);
-
             cmbDevice.DisplayMember = "Name";
-            cmbDevice.DataSource = _devices;
-
+            cmbDevice.DataSource = new BindingList<Device>(_appData.Devices);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            FileUtils.WriteToJsonFile("data.json", _devices, true);
+            _appData.Write();
             this.DialogResult = DialogResult.OK;
         }
     }

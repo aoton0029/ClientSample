@@ -26,13 +26,11 @@ namespace ServerSample
         /// <summary>
         /// JSONファイルからオブジェクトを読み込む
         /// </summary>
-        public static T ReadFromJsonFile<T>(string filePath, T defaultValue=null) where T : class, new()
+        public static T ReadFromJsonFile<T>(string filePath) 
         {
             if (!File.Exists(filePath))
             {
-                defaultValue ??= new T(); // Tのデフォルト値を作成
-                WriteToJsonFile(filePath, defaultValue, indent: true);
-                return defaultValue;
+                throw new FileNotFoundException();
             }
 
             string json = File.ReadAllText(filePath);
