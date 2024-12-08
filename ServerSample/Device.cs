@@ -10,6 +10,5 @@ namespace ServerSample
     {
         public string Name { get; set; } = "";
         public List<ResponseCommand> Commands { get; set; } = new List<ResponseCommand>();
-
     }
 }

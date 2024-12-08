@@ -11,6 +11,14 @@ namespace ServerSample
         public string Command { get; set; } = "";
         public string Value { get; set; } = "";
 
+        public Device Device
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
         public ResponseCommand()
         {
 
