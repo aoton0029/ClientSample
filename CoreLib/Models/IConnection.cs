@@ -10,8 +10,6 @@ namespace CoreLib.Models
     {
         int Timeout { get; set; }
 
-        string DevicePath { get; }
-
         Task Open(CancellationToken cancellationToken = default);
 
         void Close();

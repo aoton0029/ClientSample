@@ -10,22 +10,19 @@ namespace CoreLib.Models
 {
     public class TcpConnection : IConnection
     {
+        public const int DefaultTimeout = 500;
         private TcpClient _Client;
         public int Timeout { get; set; }
-        public string DevicePath { get; }
         public string Host { get; }
         public int Port { get; }
-        public const int DefaultTimeout = 500;
-        protected ILogger<TcpConnection> Logger { get; }
         public bool IsOpen => _Client?.Connected == true;
 
-        public TcpConnection(string host, int port, int timeout = DefaultTimeout, ILogger<TcpConnection> logger = null)
+        public TcpConnection(string host, int port, int timeout = DefaultTimeout)
         {
             Host = host;
             Port = port;
             Timeout = timeout;
-            Logger = logger;
-            DevicePath = $"tcp://{host}:{port}";
+            //DevicePath = $"tcp://{host}:{port}";
         }
 
         public async Task Open(CancellationToken cancellationToken = default)
@@ -39,7 +36,7 @@ namespace CoreLib.Models
             };
 
             // Start asynchronous connection and connection timeout task:
-            Logger?.LogInformation($"Creating TCP connection to {Host}:{Port}...", Host, Port);
+            //Logger?.LogInformation($"Creating TCP connection to {Host}:{Port}...", Host, Port);
             Task timeoutTask = Task.Delay(Timeout, cancellationToken);
             Task connTask = _Client.ConnectAsync(Host, Port);
 
@@ -49,7 +46,7 @@ namespace CoreLib.Models
             // Check for cancelling:
             if (timeoutTask.IsCanceled)
             {
-                Logger?.LogWarning("Connection to the remote device has been cancelled.");
+                //Logger?.LogWarning("Connection to the remote device has been cancelled.");
                 _Client.Dispose();
                 _Client = null;
                 throw new OperationCanceledException();
@@ -58,19 +55,19 @@ namespace CoreLib.Models
             // Check for timeout:
             if (timeoutTask.IsCompleted)
             {
-                Logger?.LogError($"Connection to the remote device {Host}:{Port} timed out.");
+                //Logger?.LogError($"Connection to the remote device {Host}:{Port} timed out.");
                 _Client.Dispose();
                 _Client = null;
                 throw new TimeoutException($"Connection to the remote device {Host}:{Port} timed out.");
             }
 
-            Logger?.LogInformation("Connection succeeded.");
+            //Logger?.LogInformation("Connection succeeded.");
         }
 
 
         public void Close()
         {
-            Logger?.LogInformation("Closing the TCP connection.");
+            //Logger?.LogInformation("Closing the TCP connection.");
             _Client?.Dispose();
             _Client = null;
         }
