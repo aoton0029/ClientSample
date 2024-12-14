@@ -9,39 +9,30 @@ using System.Threading.Tasks;
 namespace CoreLib.Templates
 {
     // パターンマッチテンプレート
-    public class TextMatchTemplate : Template<string>
+    public class TextMatchTemplate : Template
     {
-        public TextMatchTemplate(string id, string name, dynamic nextTemplateInfo)
+        protected override async Task InitializeAsync(params object[] paramters)
         {
-            Id = id;
-            Name = name;
-            NextTemplateInfo = nextTemplateInfo;
+            Console.WriteLine("Initializing CaseTemplate...");
+            await Task.CompletedTask;
         }
 
-        protected override void Initialize()
+        protected override void FinalizeResult(string commandResult)
         {
-            Console.WriteLine($"{Name} (ID: {Id}) Initialization");
-            Commands.Add(new CommandText());
-        }
+            Console.WriteLine($"Received String: {commandResult}");
 
-        protected override void FinalizeResult()
-        {
-            Console.WriteLine($"{Name} (ID: {Id}) Finalization");
-            string inputString = "MatchThis"; // 固定文字列として仮定
-            Console.WriteLine($"Input String: {inputString}");
-
-            string nextTemplateId = null;
-            foreach (var condition in NextTemplateInfo)
+            switch (commandResult)
             {
-                string pattern = condition.pattern;
-                if (Regex.IsMatch(inputString, pattern))
-                {
-                    nextTemplateId = condition.next;
+                case "SUCCESS":
+                    Result = new TemplateResult("EndTemplate", "Case: SUCCESS.", true);
                     break;
-                }
+                case "FAILURE":
+                    Result = new TemplateResult("EndTemplate", "Case: FAILURE.", false);
+                    break;
+                default:
+                    Result = new TemplateResult(null, "Case: UNKNOWN.", false);
+                    break;
             }
-
-            Result = new Result<string>(nextTemplateId, $"Pattern match evaluated for input: {inputString}", true, inputString);
         }
     }
 }

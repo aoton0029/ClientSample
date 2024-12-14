@@ -1,54 +1,51 @@
-﻿using CoreLib.Templates;
+﻿using CoreLib.Models;
+using CoreLib.Templates;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 
 namespace CoreLib
 {
     public class Class1
     {
-        public static void Main(string[] args)
+        public async void Main(string[] args)
         {
-            // JSONファイルの読み込み
-            string jsonFilePath = "templates.json";
-            string jsonContent = File.ReadAllText(jsonFilePath);
-            var templatesConfig = JsonSerializer.Deserialize<Dictionary<string, List<Dictionary<string, object>>>>(jsonContent);
+            // デバイスの設定
+            Device device = new Device(new TcpConnection());
 
-            Dictionary<string, BaseTemplate> templates = new Dictionary<string, BaseTemplate>();
+            // テンプレートの構築
+            var templates = new Dictionary<string, Template>
+        {
+            { "ThresholdTemplate", new ThresholdTemplate() },
+            { "CaseTemplate", new CaseTemplate() },
+            { "EndTemplate", new EndTemplate() }
+        };
 
-            // テンプレート構築
-            foreach (var templateInfo in templatesConfig["templates"])
-            {
-                string id = templateInfo["id"].ToString();
-                string name = templateInfo["name"].ToString();
-                dynamic nextTemplate = templateInfo["nextTemplate"];
+            // 初期テンプレートとコマンドリスト
+            Template currentTemplate = templates["ThresholdTemplate"];
+            var initialCommands = new List<ICommand> { new ReceiveCommand() };
 
-                BaseTemplate template = name switch
-                {
-                    "NumericThresholdTemplate" => new NumericThresholdTemplate(id, name, nextTemplate),
-                    "TextMatchTemplate" => new TextMatchTemplate(id, name, nextTemplate),
-                    "EndTemplate" => new EndTemplate(id, name),
-                    _ => null
-                };
-
-                if (template != null)
-                {
-                    templates[id] = template;
-                }
-            }
-
-            // 実行開始
-            BaseTemplate currentTemplate = templates["1"]; // 最初のテンプレート
             while (currentTemplate != null)
             {
-                currentTemplate.Run();
-                Console.WriteLine($"Message: {currentTemplate.Name}");
+                // テンプレートごとにパラメータを渡す
+                var parameters = new Dictionary<string, object>();
 
-                string nextTemplateId = currentTemplate.GetNextTemplateId();
-                if (string.IsNullOrEmpty(nextTemplateId) || !templates.ContainsKey(nextTemplateId))
+                if (currentTemplate is ThresholdTemplate)
+                {
+                    parameters["threshold"] = 50.0m;
+                }
+
+                await currentTemplate.InitializeAsync(initialCommands, parameters);
+                await currentTemplate.RunAsync(device);
+
+                Console.WriteLine($"Message: {currentTemplate.Result.Message}");
+
+                string nextTemplate = currentTemplate.Result.NextTemplate;
+                if (string.IsNullOrEmpty(nextTemplate) || !templates.ContainsKey(nextTemplate))
                 {
                     break;
                 }
 
-                currentTemplate = templates[nextTemplateId];
+                currentTemplate = templates[nextTemplate];
             }
 
             Console.WriteLine("Process Completed.");

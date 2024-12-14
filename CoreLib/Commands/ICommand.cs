@@ -10,6 +10,6 @@ namespace CoreLib.Commands
     // コマンドインターフェース
     public interface ICommand
     {
-        string Execute(Device device);
+        Task<string> ExecuteAsync(IDevice device);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CoreLib.Commands;
+using CoreLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,33 +8,33 @@ using System.Threading.Tasks;
 
 namespace CoreLib.Templates
 {
-    public abstract class Template<T> : BaseTemplate
+    public abstract class Template
     {
+        public string Name { get; set; }
+        public string Id { get; set; }
         protected List<ICommand> Commands = new List<ICommand>();
-        public Result<T> Result { get; protected set; } // ジェネリック型のResult
+        public TemplateResult Result { get; protected set; }
 
-        public override void Run()
+        public async Task RunAsync(IDevice device, IEnumerable<ICommand> commands, params object[] paramters)
         {
-            Initialize();
-            ExecuteCommands();
-            FinalizeResult();
-        }
+            Commands = commands.ToList();
+            await InitializeAsync(paramters);
+            
+            string commandResult = null;
 
-        protected abstract void Initialize();
-
-        private void ExecuteCommands()
-        {
             foreach (var command in Commands)
             {
-                command.Execute();
+                string result = await command.ExecuteAsync(device);
+                if (result != null) // 結果を返すコマンドの場合
+                {
+                    commandResult = result;
+                }
             }
+
+            FinalizeResult(commandResult);
         }
 
-        protected abstract void FinalizeResult();
-
-        public override string GetNextTemplateId()
-        {
-            return Result?.NextTemplateId;
-        }
+        protected abstract Task InitializeAsync(params object[] parameters);
+        protected abstract void FinalizeResult(string commandResult);
     }
 }

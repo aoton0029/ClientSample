@@ -7,23 +7,18 @@ using System.Threading.Tasks;
 namespace CoreLib.Templates
 {
     // 終了テンプレート
-    public class EndTemplate : Template<object>
+    public class EndTemplate : Template
     {
-        public EndTemplate(string id, string name)
+        protected override async Task InitializeAsync()
         {
-            Id = id;
-            Name = name;
+            Console.WriteLine("Initializing EndTemplate...");
+            await Task.CompletedTask;
         }
 
-        protected override void Initialize()
+        protected override void FinalizeResult(string commandResult)
         {
-            Console.WriteLine($"{Name} (ID: {Id}) Initialization");
-        }
-
-        protected override void FinalizeResult()
-        {
-            Console.WriteLine($"{Name} (ID: {Id}) Finalization");
-            Result = new Result<object>(null, "Process ended.", true, null);
+            Console.WriteLine("Finalizing EndTemplate...");
+            Result = new TemplateResult(null, "Process ended.", true);
         }
     }
 }
