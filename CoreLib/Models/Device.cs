@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CoreLib.Models
 {
-    public class Device : IDisposable
+    public class Device : IDisposable, IDevice
     {
         public IConnection Connection { get; protected set; }
 
@@ -40,12 +40,12 @@ namespace CoreLib.Models
             }
         }
 
-        protected async Task SendCmd(string command)
+        public async Task SendCmdAsync(string command)
         {
             await Connection.WriteString(command, true);
         }
 
-        protected async Task<string> Query(string command, CancellationToken cancellationToken = default)
+        public async Task<string> QueryAsync(string command, CancellationToken cancellationToken = default)
         {
             await Connection.WriteString(command, true, cancellationToken);
             string response = await Connection.ReadString(0, cancellationToken);

@@ -34,8 +34,8 @@ namespace CoreLib
                     parameters["threshold"] = 50.0m;
                 }
 
-                await currentTemplate.InitializeAsync(initialCommands, parameters);
-                await currentTemplate.RunAsync(device);
+                await currentTemplate.InitializeAsync(
+                await currentTemplate.RunAsync(device, initialCommands, parameters););
 
                 Console.WriteLine($"Message: {currentTemplate.Result.Message}");
 
