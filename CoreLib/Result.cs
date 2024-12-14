@@ -6,19 +6,20 @@ using System.Threading.Tasks;
 
 namespace CoreLib
 {
-    public class Result<T>
+    // Result構造体
+    public struct Result
     {
-        public string NextTemplateId { get; set; }
+        public string NextTemplate { get; set; }
         public string Message { get; set; }
-        public bool IsSuccess { get; set; }
-        public T Value { get; set; } // ジェネリック型の値を保持
+        public int NumericResult { get; set; }
+        public string TextResult { get; set; }
 
-        public Result(string nextTemplateId, string message, bool isSuccess, T value)
+        public Result(string nextTemplate, string message, int numericResult = 0, string textResult = null)
         {
-            NextTemplateId = nextTemplateId;
+            NextTemplate = nextTemplate;
             Message = message;
-            IsSuccess = isSuccess;
-            Value = value;
+            NumericResult = numericResult;
+            TextResult = textResult;
         }
     }
 }

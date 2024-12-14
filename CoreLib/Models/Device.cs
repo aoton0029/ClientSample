@@ -21,13 +21,13 @@ namespace CoreLib.Models
 
         public const int DefaultPollingTimeoutMs = 10000;
 
+        public string InstrumentId { get; }
+
         public Device(IConnection connection, string deviceId)
         {
             Connection = connection;
             InstrumentId = deviceId;
         }
-
-        public string InstrumentId { get; }
 
         public virtual Task Close()
         {
@@ -48,17 +48,6 @@ namespace CoreLib.Models
             Dispose(true);
         }
 
-        protected static string StripHeader(string response, string query)
-        {
-            string expectedHeader = ":" + query.Replace("?", " ");
-            if (!response.StartsWith(expectedHeader))
-            {
-                throw new Exception($"Cannot find response header: '{response}'.");
-            }
-
-            return response.Substring(expectedHeader.Length);
-        }
-
         protected async Task SendCmd(string command)
         {
             await Connection.WriteString(command, true);
@@ -71,12 +60,6 @@ namespace CoreLib.Models
 
             // Read the response:
             string response = await Connection.ReadString(0, cancellationToken);
-
-            // If you turned on the response headers, you probably want to strip them from the response:
-            if (stripHeader)
-            {
-                response = StripHeader(response, command);
-            }
 
             return response;
         }
@@ -100,13 +83,6 @@ namespace CoreLib.Models
 
                 // Wait for the response with extended timeout:
                 string responseWithHeader = await Connection.ReadString(ExtendedPollingCommandTimeoutMs, cancellationToken);
-                string strippedResponse = StripHeader(responseWithHeader, command);
-
-                // Check we have the expected response:
-                if (strippedResponse == response)
-                {
-                    return;
-                }
 
                 // Wait for a while and then try again:
                 await Task.Delay(EventPollingIntervalMs, cancellationToken);

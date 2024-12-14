@@ -16,6 +16,7 @@ namespace CoreLib.Models
         public string Host { get; }
         public int Port { get; }
         public bool IsOpen => _Client?.Connected == true;
+        ILogger<TcpConnection> Logger;
 
         public TcpConnection(string host, int port, int timeout = DefaultTimeout)
         {
@@ -36,7 +37,7 @@ namespace CoreLib.Models
             };
 
             // Start asynchronous connection and connection timeout task:
-            //Logger?.LogInformation($"Creating TCP connection to {Host}:{Port}...", Host, Port);
+            Logger?.LogInformation($"Creating TCP connection to {Host}:{Port}...", Host, Port);
             Task timeoutTask = Task.Delay(Timeout, cancellationToken);
             Task connTask = _Client.ConnectAsync(Host, Port);
 
@@ -46,7 +47,7 @@ namespace CoreLib.Models
             // Check for cancelling:
             if (timeoutTask.IsCanceled)
             {
-                //Logger?.LogWarning("Connection to the remote device has been cancelled.");
+                Logger?.LogWarning("Connection to the remote device has been cancelled.");
                 _Client.Dispose();
                 _Client = null;
                 throw new OperationCanceledException();
@@ -61,7 +62,7 @@ namespace CoreLib.Models
                 throw new TimeoutException($"Connection to the remote device {Host}:{Port} timed out.");
             }
 
-            //Logger?.LogInformation("Connection succeeded.");
+            Logger?.LogInformation("Connection succeeded.");
         }
 
 
@@ -101,10 +102,6 @@ namespace CoreLib.Models
                 throw new TimeoutException("Reading from the device timed out.");
             }
 
-            // The TCP protocol does not have EOF flag like the USB TMC protocol, but all SCPI messages (including curve data)
-            // end with the new line character which can be used as the EOF flag. Correct EOF detection is very important because
-            // some oscilloscopes (MDO3024) sometimes fragment the response into multiple packets and the above reading returns
-            // only the first packet content.
             bool eof = readTask.Result <= 0 || buffer[readTask.Result - 1] == 0x0a;
             return new ReadResult(readTask.Result, eof, buffer);
         }
