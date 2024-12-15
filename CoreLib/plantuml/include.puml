@@ -1,0 +1,21 @@
+@startuml
+!include .\\Class1.puml
+!include .\\Result.puml
+!include .\\Utility.puml
+!include .\\Commands\ICommand.puml
+!include .\\Commands\RegularCommand.puml
+!include .\\Models\Device.puml
+!include .\\Models\IConnection.puml
+!include .\\Models\ReadResult.puml
+!include .\\Models\ScpiConnection.puml
+!include .\\Models\SerialPortConnection.puml
+!include .\\Models\TcpConnection.puml
+!include .\\Templates\BaseTemplate.puml
+!include .\\Templates\EndTemplate.puml
+!include .\\Templates\NumericThresholdTemplate.puml
+!include .\\Templates\Template.puml
+!include .\\Templates\TextMatchTemplate.puml
+!include .\\obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.puml
+!include .\\obj\Debug\net8.0\CoreLib.AssemblyInfo.puml
+!include .\\obj\Debug\net8.0\CoreLib.GlobalUsings.g.puml
+@enduml

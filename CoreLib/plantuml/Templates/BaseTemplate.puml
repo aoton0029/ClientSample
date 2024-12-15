@@ -1,0 +1,8 @@
+@startuml
+abstract class BaseTemplate {
+    + Id : string <<get>> <<protected set>>
+    + Name : string <<get>> <<protected set>>
+    + {abstract} GetNextTemplateId() : string
+    + {abstract} Run() : void
+}
+@enduml

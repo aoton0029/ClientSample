@@ -1,0 +1,17 @@
+@startuml
+class TcpConnection {
+    + <<const>> DefaultTimeout : int = 500
+    + Timeout : int <<get>> <<set>>
+    + Host : string <<get>>
+    + Port : int <<get>>
+    + IsOpen : bool <<get>>
+    + TcpConnection(host:string, port:int, timeout:int)
+    + <<async>> Open(cancellationToken:CancellationToken) : Task
+    + Close() : void
+    + <<async>> Read(buffer:byte[], readLength:int, specialTimeout:int, cancellationToken:CancellationToken) : Task<ReadResult>
+    + <<async>> Write(data:byte[], cancellationToken:CancellationToken) : Task
+    + <<async>> ClearBuffers(cancellationToken:CancellationToken) : Task
+    + Dispose() : void
+}
+IConnection <|-- TcpConnection
+@enduml

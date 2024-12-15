@@ -1,0 +1,12 @@
+@startuml
+class Device {
+    + <<const>> DefaultPollingTimeoutMs : int = 10000
+    + InstrumentId : string <<get>>
+    + Device(connection:IConnection, deviceId:string)
+    + <<virtual>> Close() : Task
+    + Dispose() : void
+}
+IDisposable <|-- Device
+Device --> "Connection" IConnection
+Device o-> "NumberStyle" NumberStyles
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+struct Result {
+    + NextTemplate : string <<get>> <<set>>
+    + Message : string <<get>> <<set>>
+    + NumericResult : int <<get>> <<set>>
+    + TextResult : string <<get>> <<set>>
+    + Result(nextTemplate:string, message:string, numericResult:int, textResult:string)
+}
+@enduml

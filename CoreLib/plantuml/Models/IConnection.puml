@@ -1,0 +1,5 @@
+@startuml
+interface IConnection {
+}
+IDisposable <|-- IConnection
+@enduml

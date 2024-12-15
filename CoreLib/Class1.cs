@@ -1,4 +1,5 @@
-﻿using CoreLib.Models;
+﻿using CoreLib.Commands;
+using CoreLib.Models;
 using CoreLib.Templates;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
@@ -10,42 +11,61 @@ namespace CoreLib
         public async void Main(string[] args)
         {
             // デバイスの設定
-            Device device = new Device(new TcpConnection());
+            Device device = new Device(new TcpConnection("", 8080), "");
 
-            // テンプレートの構築
+            // 全テンプレートの作成
             var templates = new Dictionary<string, Template>
         {
-            { "ThresholdTemplate", new ThresholdTemplate() },
-            { "CaseTemplate", new CaseTemplate() },
-            { "EndTemplate", new EndTemplate() }
+            { "Threshold1", new ThresholdTemplate("Threshold1") },
+            { "Case1", new CaseTemplate("Case1") },
+            { "End1", new EndTemplate("End1") }
         };
 
-            // 初期テンプレートとコマンドリスト
-            Template currentTemplate = templates["ThresholdTemplate"];
-            var initialCommands = new List<ICommand> { new ReceiveCommand() };
+            // 各テンプレートの初期化
+            templates["Threshold1"].Initialize(
+                new List<ICommand> { new ReceiveCommand() },
+                new Dictionary<string, object>
+                {
+                { "threshold", 50.0m },
+                { "aboveThresholdID", "Case1" },
+                { "belowThresholdID", "End1" }
+                }
+            );
+
+            templates["Case1"].Initialize(
+                new List<ICommand> { new ReceiveCommand() },
+                new Dictionary<string, object>
+                {
+                { "cases", new Dictionary<string, string>
+                    {
+                        { "SUCCESS", "End1" },
+                        { "FAILURE", "End1" }
+                    }
+                }
+                }
+            );
+
+            templates["End1"].Initialize(
+                new List<ICommand>(),
+                null
+            );
+
+            // 初期テンプレート
+            Template currentTemplate = templates["Threshold1"];
 
             while (currentTemplate != null)
             {
-                // テンプレートごとにパラメータを渡す
-                var parameters = new Dictionary<string, object>();
-
-                if (currentTemplate is ThresholdTemplate)
-                {
-                    parameters["threshold"] = 50.0m;
-                }
-
-                await currentTemplate.InitializeAsync(initialCommands, parameters);
                 await currentTemplate.RunAsync(device);
 
                 Console.WriteLine($"Message: {currentTemplate.Result.Message}");
 
-                string nextTemplate = currentTemplate.Result.NextTemplate;
-                if (string.IsNullOrEmpty(nextTemplate) || !templates.ContainsKey(nextTemplate))
+                string nextTemplateID = currentTemplate.Result.NextTemplate;
+                if (string.IsNullOrEmpty(nextTemplateID) || !templates.ContainsKey(nextTemplateID))
                 {
                     break;
                 }
 
-                currentTemplate = templates[nextTemplate];
+                currentTemplate = templates[nextTemplateID];
             }
 
             Console.WriteLine("Process Completed.");

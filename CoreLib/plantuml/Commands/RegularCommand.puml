@@ -1,0 +1,7 @@
+@startuml
+class RegularCommand {
+    + RegularCommand(data:string)
+    + Execute(device:Device) : string
+}
+ICommand <|-- RegularCommand
+@enduml

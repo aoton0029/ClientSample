@@ -1,0 +1,7 @@
+@startuml
+struct ReadResult {
+    + Length : int <<get>>
+    + Eof : bool <<get>>
+    + ReadResult(length:int, eof:bool, data:byte[])
+}
+@enduml

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoreLib.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,12 @@ namespace CoreLib.Templates
     // 終了テンプレート
     public class EndTemplate : Template
     {
-        protected override async Task InitializeAsync()
+        public EndTemplate(string id) : base(id) { }
+
+        public override void Initialize(List<ICommand> commands, Dictionary<string, object> parameters)
         {
-            Console.WriteLine("Initializing EndTemplate...");
-            await Task.CompletedTask;
+            Console.WriteLine($"Initializing EndTemplate: {ID}");
+            Commands = commands;
         }
 
         protected override void FinalizeResult(string commandResult)

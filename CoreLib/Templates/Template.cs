@@ -10,16 +10,17 @@ namespace CoreLib.Templates
 {
     public abstract class Template
     {
-        public string Name { get; set; }
-        public string Id { get; set; }
+        public string ID { get; }
         protected List<ICommand> Commands = new List<ICommand>();
         public TemplateResult Result { get; protected set; }
 
-        public async Task RunAsync(IDevice device, IEnumerable<ICommand> commands, params object[] paramters)
+        protected Template(string id)
         {
-            Commands = commands.ToList();
-            await InitializeAsync(paramters);
-            
+            ID = id;
+        }
+
+        public async Task RunAsync(IDevice device)
+        {
             string commandResult = null;
 
             foreach (var command in Commands)
@@ -34,7 +35,7 @@ namespace CoreLib.Templates
             FinalizeResult(commandResult);
         }
 
-        protected abstract Task InitializeAsync(params object[] parameters);
+        public abstract void Initialize(List<ICommand> commands, Dictionary<string, object> parameters);
         protected abstract void FinalizeResult(string commandResult);
     }
 }

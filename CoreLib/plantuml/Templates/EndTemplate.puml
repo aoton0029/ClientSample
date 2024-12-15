@@ -1,0 +1,8 @@
+@startuml
+class EndTemplate {
+    + EndTemplate(id:string, name:string)
+}
+class "Template`1"<T> {
+}
+"Template`1" "<object>" <|-- EndTemplate
+@enduml

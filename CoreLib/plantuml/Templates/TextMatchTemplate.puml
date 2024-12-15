@@ -1,0 +1,8 @@
+@startuml
+class TextMatchTemplate {
+    + TextMatchTemplate(id:string, name:string, nextTemplateInfo:dynamic)
+}
+class "Template`1"<T> {
+}
+"Template`1" "<string>" <|-- TextMatchTemplate
+@enduml
