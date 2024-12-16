@@ -1,5 +1,6 @@
-using CoreLib.Dbs;
+using ClientSample.Dbs;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace ClientSample
 {
@@ -21,23 +22,23 @@ namespace ClientSample
 
                 foreach (var template in templates)
                 {
-                    Console.WriteLine($"Template ID: {template.TemplateID}");
-                    Console.WriteLine($"Template Type: {template.TemplateType.Name}");
+                    Debug.WriteLine($"Template ID: {template.TemplateID}");
+                    Debug.WriteLine($"Template Type: {template.TemplateType.Name}");
                     if (template.ConditionType != null)
                     {
-                        Console.WriteLine($"Condition Type: {template.ConditionType.Name}");
+                        Debug.WriteLine($"Condition Type: {template.ConditionType.Name}");
                     }
 
-                    Console.WriteLine("Conditions:");
+                    Debug.WriteLine("Conditions:");
                     foreach (var condition in template.Conditions)
                     {
-                        Console.WriteLine($"  - {condition.KeyMaster.Name}: {condition.Value}");
+                        Debug.WriteLine($"  - {condition.KeyMaster.Name}: {condition.Value}");
                     }
 
-                    Console.WriteLine("Commands:");
+                    Debug.WriteLine("Commands:");
                     foreach (var command in template.Commands)
                     {
-                        Console.WriteLine($"  - Command Type: {command.CommandType.Name}, Device: {command.TargetDeviceID}, Data: {command.Data}");
+                        Debug.WriteLine($"  - Command Type: {command.CommandType.Name}, Device: {command.TargetDeviceID}, Data: {command.Data}");
                     }
 
                     Console.WriteLine();
