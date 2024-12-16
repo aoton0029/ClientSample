@@ -24,7 +24,7 @@ namespace CoreLib.Dbs
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("YourConnectionStringHere");
+            optionsBuilder.UseSqlite("Data Source=app.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

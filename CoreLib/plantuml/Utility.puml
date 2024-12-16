@@ -1,4 +1,0 @@
-@startuml
-class Utility <<static>> {
-}
-@enduml

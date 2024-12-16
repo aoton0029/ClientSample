@@ -1,8 +1,0 @@
-@startuml
-class ScpiConnection <<static>> {
-    + {static} <<async>> WriteString(conn:IConnection, data:string, addNewLine:bool, cancellationToken:CancellationToken) : Task
-    + {static} <<async>> ReadString(conn:IConnection, specialTimeout:int, cancellationToken:CancellationToken) : Task<string>
-    + {static} <<async>> ReadBytes(conn:IConnection, specialTimeout:int, cancellationToken:CancellationToken) : Task<byte[]>
-    + {static} <<async>> GetId(conn:IConnection, cancellationToken:CancellationToken) : Task<string>
-}
-@enduml

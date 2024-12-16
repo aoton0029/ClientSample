@@ -16,6 +16,6 @@ namespace CoreLib.Dbs.Models
         [Required]
         public string Name { get; set; }
 
-        public ICollection<Command> Commands { get; set; }
+        public ICollection<DbCommand> Commands { get; set; }
     }
 }

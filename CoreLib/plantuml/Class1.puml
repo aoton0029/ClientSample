@@ -1,5 +1,0 @@
-@startuml
-class Class1 {
-    + {static} Main(args:string[]) : void
-}
-@enduml

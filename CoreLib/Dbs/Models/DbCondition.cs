@@ -18,7 +18,7 @@ namespace CoreLib.Dbs.Models
         public string TemplateID { get; set; }
 
         [ForeignKey(nameof(TemplateID))]
-        public Template Template { get; set; }
+        public DbTemplate Template { get; set; }
 
         [Required]
         public int KeyID { get; set; }

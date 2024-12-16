@@ -1,8 +1,0 @@
-@startuml
-class NumericThresholdTemplate {
-    + NumericThresholdTemplate(id:string, name:string, nextTemplateInfo:dynamic)
-}
-class "Template`1"<T> {
-}
-"Template`1" "<int>" <|-- NumericThresholdTemplate
-@enduml

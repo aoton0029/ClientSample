@@ -15,6 +15,6 @@ namespace CoreLib.Dbs.Models
         [Required]
         public string Name { get; set; }
 
-        public ICollection<Condition> Conditions { get; set; }
+        public ICollection<DbCondition> Conditions { get; set; }
     }
 }
