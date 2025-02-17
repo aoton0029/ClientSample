@@ -4,18 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace ClientSample.Dbs.Models
+namespace CommLib
 {
-    public class DbCommandType
+    public class DbConditionType
     {
         [Key]
-        public int CommandTypeID { get; set; }
+        public int ConditionTypeID { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        public ICollection<DbCommand> Commands { get; set; }
+        public ICollection<DbTemplate> Templates { get; set; }
     }
 }

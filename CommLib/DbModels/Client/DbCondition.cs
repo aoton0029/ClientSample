@@ -1,19 +1,17 @@
-﻿using CoreLib.Templates;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoreLib.Dbs.Models
+namespace CommLib
 {
-    public class DbCommand
+    public class DbCondition
     {
         [Key]
-        public int CommandID { get; set; }
+        public int ConditionID { get; set; }
 
         [Required]
         public string TemplateID { get; set; }
@@ -22,14 +20,12 @@ namespace CoreLib.Dbs.Models
         public DbTemplate Template { get; set; }
 
         [Required]
-        public int CommandTypeID { get; set; }
+        public int KeyID { get; set; }
 
-        [ForeignKey(nameof(CommandTypeID))]
-        public DbCommandType CommandType { get; set; }
+        [ForeignKey(nameof(KeyID))]
+        public DbKeyMaster KeyMaster { get; set; }
 
         [Required]
-        public string TargetDeviceID { get; set; }
-
-        public string Data { get; set; }
+        public string Value { get; set; }
     }
 }

@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientSample.Dbs.Models
+namespace CommLib
 {
-    public class DbKeyMaster
+    public class DbTemplateType
     {
         [Key]
-        public int KeyID { get; set; }
+        public int TemplateTypeID { get; set; }
 
         [Required]
         public string Name { get; set; }
 
-        public ICollection<DbCondition> Conditions { get; set; }
+        public ICollection<DbTemplate> Templates { get; set; }
     }
 }
