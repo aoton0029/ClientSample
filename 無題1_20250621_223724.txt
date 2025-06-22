@@ -1,0 +1,138 @@
+ public abstract class Template
+ {
+     public string ID { get; }
+     protected List<ICommand> Commands = new List<ICommand>();
+     public TemplateResult Result { get; protected set; }
+
+     protected Template(string id)
+     {
+         ID = id;
+     }
+
+     public async Task RunAsync(ClientSample.Devices.IDevice device)
+     {
+         string commandResult = null;
+
+         foreach (var command in Commands)
+         {
+             string result = await command.ExecuteAsync(device);
+             if (result != null) // 結果を返すコマンドの場合
+             {
+                 commandResult = result;
+             }
+         }
+
+         FinalizeResult(commandResult);
+     }
+
+     public abstract void Initialize(List<ICommand> commands, Dictionary<string, object> parameters);
+     protected abstract void FinalizeResult(string commandResult);
+ }
+ 
+ 
+ 
+ // パターンマッチテンプレート
+public class CaseTemplate : Template
+{
+    private Dictionary<string, string> _caseMapping;
+
+    public CaseTemplate(string id) : base(id) { }
+
+    public override void Initialize(List<ICommand> commands, Dictionary<string, object> parameters)
+    {
+        Console.WriteLine($"Initializing CaseTemplate: {ID}");
+
+        // パラメータからケースマッピングを取得
+        _caseMapping = (Dictionary<string, string>)parameters["cases"];
+        Commands = commands;
+    }
+
+    protected override void FinalizeResult(string commandResult)
+    {
+        Console.WriteLine($"Received String: {commandResult}");
+
+        if (_caseMapping != null && _caseMapping.TryGetValue(commandResult, out string nextTemplateID))
+        {
+            Result = new TemplateResult(nextTemplateID, $"Case: {commandResult}.", true);
+        }
+        else
+        {
+            Result = new TemplateResult(null, "Case: UNKNOWN.", false);
+        }
+    }
+}
+
+// 終了テンプレート
+public class EndTemplate : Template
+{
+    public EndTemplate(string id) : base(id) { }
+
+    public override void Initialize(List<ICommand> commands, Dictionary<string, object> parameters)
+    {
+        Console.WriteLine($"Initializing EndTemplate: {ID}");
+        Commands = commands;
+    }
+
+    protected override void FinalizeResult(string commandResult)
+    {
+        Console.WriteLine("Finalizing EndTemplate...");
+        Result = new TemplateResult(null, "Process ended.", true);
+    }
+}
+
+
+
+    // Result構造体
+    public struct TemplateResult
+    {
+        public string NextTemplate { get; }
+        public string Message { get; }
+        public bool IsSuccess { get; }
+
+        public TemplateResult(string nextTemplate, string message, bool isSuccess)
+        {
+            NextTemplate = nextTemplate;
+            Message = message;
+            IsSuccess = isSuccess;
+        }
+    }
+    
+    
+     public class ThresholdTemplate : Template
+ {
+     private decimal _threshold;
+     private string _aboveThresholdID;
+     private string _belowThresholdID;
+
+     public ThresholdTemplate(string id) : base(id) { }
+
+     public override void Initialize(List<ICommand> commands, Dictionary<string, object> parameters)
+     {
+         Console.WriteLine($"Initializing ThresholdTemplate: {ID}");
+
+         // パラメータから閾値と遷移先IDを取得
+         if (parameters != null)
+         {
+             _threshold = (decimal)parameters["threshold"];
+             _aboveThresholdID = (string)parameters["aboveThresholdID"];
+             _belowThresholdID = (string)parameters["belowThresholdID"];
+         }
+
+         Commands = commands;
+     }
+
+     protected override void FinalizeResult(string commandResult)
+     {
+         if (decimal.TryParse(commandResult, out decimal value))
+         {
+             Console.WriteLine($"Received Value: {value}");
+             Result = value > _threshold
+                 ? new TemplateResult(_aboveThresholdID, $"Value exceeds {_threshold}.", true)
+                 : new TemplateResult(_belowThresholdID, $"Value is below {_threshold}.", true);
+         }
+         else
+         {
+             Result = new TemplateResult(null, "Failed to parse value.", false);
+         }
+     }
+ }

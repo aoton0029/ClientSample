@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Device1.Core
+namespace PowersupplyCtrl
 {
     public abstract class CommandHandlerBase
     {
@@ -177,16 +177,6 @@ namespace Device1.Core
             }
 
             return result;
-        }
-
-        // 必須の共通メソッド
-        public abstract Task<string> GetIdentificationAsync();
-        public abstract Task ResetInstrumentAsync();
-
-        // デバイスによって実装が異なる可能性のあるメソッド
-        public virtual async Task<double> GetVolt()
-        {
-            throw new NotSupportedException("このデバイスは電圧測定をサポートしていません。");
         }
     }
 }

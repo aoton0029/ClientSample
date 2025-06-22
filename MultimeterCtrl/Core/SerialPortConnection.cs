@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Device1
+namespace MultimeterCtrl
 {
     public class SerialPortConnection : IConnection
     {
